@@ -1,6 +1,5 @@
 # byte-hist
-byte-hist is a simple tool that prints a histogram of the bytes appearing in
-a file. It also gives you further information about the byte distribution.
+`byte-hist` is a simple tool that prints a histogram of the bytes of a file.
 ## Installation
 To install byte-hist, simply run:
 ```
@@ -11,11 +10,11 @@ Once the `get` completes, you should find the `byte-hist` executable inside
 ## Usage
 These are some examples of how you can run `byte-hist`:
 ```
-$ ./byte-hist file
-$ ./byte-hist -format=x file
-$ echo "hello world!" | ./byte-hist
+$ ./byte-hist file                      # byte histogram of file
+$ ./byte-hist -format=x file            # the bytes are printed in hexadecimal format
+$ echo "hello world!" | ./byte-hist     # you can use a pipe
 ```
-For the complete available options, just type:
+For the complete list of available options, just type:
 ```
 $ ./byte-hist -help
 ```
