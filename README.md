@@ -3,7 +3,7 @@
 ## Installation
 To install byte-hist, simply run:
 ```
-$ go get bitbucket.org/vteromero/byte-hist
+$ go get -v github.com/vteromero/byte-hist
 ```
 Once the `get` completes, you should find the `byte-hist` executable inside
 `$GOPATH/bin`.
