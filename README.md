@@ -1,4 +1,5 @@
 # byte-hist
+![Execution example](images/example.png "Execution example")
 `byte-hist` is a simple tool that prints a histogram of the bytes of a file.
 ## Installation
 To install byte-hist, simply run:
