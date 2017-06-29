@@ -14,6 +14,8 @@ import (
 	"github.com/vteromero/byte-hist/bytehist"
 )
 
+const VERSION = "0.1"
+
 const (
 	formatBinary = iota
 	formatDecimal
@@ -120,12 +122,18 @@ func main() {
 	}
 
 	helpPtr := flag.Bool("help", false, "print this message")
+	versionPtr := flag.Bool("version", false, "print the version")
 	formatPtr := flag.String("format", "d", "byte format {\"d\"ecimal | he\"x\"adecimal | \"b\"inary}")
 
 	flag.Parse()
 
 	if *helpPtr {
 		flag.Usage()
+		os.Exit(0)
+	}
+
+	if *versionPtr {
+		fmt.Printf("byte-hist %s\n", VERSION)
 		os.Exit(0)
 	}
 
