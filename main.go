@@ -14,6 +14,7 @@ import (
 	"github.com/vteromero/byte-hist/bytehist"
 )
 
+// VERSION holds the application version
 const VERSION = "0.1"
 
 const (

@@ -16,6 +16,7 @@ const (
 	colIdxByte = iota
 	colIdxCount
 	colIdxPercentage
+	colIdxSumPercentage
 	colIdxHistogram
 )
 
@@ -24,11 +25,11 @@ const (
 	blackVerticalRectangleChar = '\u25ae'
 )
 
-const numColumns = 4
+const numColumns = 5
 
 var (
-	colWidth       = [numColumns]int{6, 15, 6, 32}
-	colValueFmt    = [numColumns]string{"%d", "%d", "%.2f", "%-30s"}
+	colWidth       = [numColumns]int{6, 15, 6, 6, 32}
+	colValueFmt    = [numColumns]string{"%d", "%d", "%.2f", "%.2f", "%-30s"}
 	histogramWidth = colWidth[colIdxHistogram] - 2
 )
 
@@ -52,11 +53,13 @@ func printTableHeader() {
 	fmt.Printf(wrappingFormat(colWidth[colIdxByte], true), "byte")
 	fmt.Printf(wrappingFormat(colWidth[colIdxCount], true), "count")
 	fmt.Printf(wrappingFormat(colWidth[colIdxPercentage], true), "rate")
+	fmt.Printf(wrappingFormat(colWidth[colIdxSumPercentage], true), "sum")
 	fmt.Printf(wrappingFormat(colWidth[colIdxHistogram], false), "  hist")
 	fmt.Println()
 
-	fmt.Printf("%s\n", strings.Repeat("=", colWidth[colIdxByte]+colWidth[colIdxCount]+
-		colWidth[colIdxPercentage]+colWidth[colIdxHistogram]+1))
+	fmt.Printf("%s\n", strings.Repeat("=", colWidth[colIdxByte]+
+		colWidth[colIdxCount]+colWidth[colIdxPercentage]+
+		colWidth[colIdxSumPercentage]+colWidth[colIdxHistogram]+1))
 }
 
 func printTableBody(bytelist []byte, bytecount []uint64, datasize uint64) {
@@ -74,8 +77,13 @@ func printTableBody(bytelist []byte, bytecount []uint64, datasize uint64) {
 		}
 	}
 
+	var sum uint64
+
 	for i, b := range bytelist {
 		percentage := float64(bytecount[i]) / float64(datasize)
+
+		sum += bytecount[i]
+		sumPercentage := float64(sum) / float64(datasize)
 
 		normCount := 1.0
 		if maxcount > mincount {
@@ -98,6 +106,8 @@ func printTableBody(bytelist []byte, bytecount []uint64, datasize uint64) {
 			fmt.Sprintf(colValueFmt[colIdxCount], bytecount[i]))
 		fmt.Printf(wrappingFormat(colWidth[colIdxPercentage], true),
 			fmt.Sprintf(colValueFmt[colIdxPercentage], percentage))
+		fmt.Printf(wrappingFormat(colWidth[colIdxSumPercentage], true),
+			fmt.Sprintf(colValueFmt[colIdxSumPercentage], sumPercentage))
 		fmt.Printf(wrappingFormat(colWidth[colIdxHistogram], true),
 			fmt.Sprintf(colValueFmt[colIdxHistogram], histStr))
 		fmt.Println()
