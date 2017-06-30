@@ -23,13 +23,20 @@ const (
 	formatHexadecimal
 )
 
+const (
+	sortOrderNone = iota
+	sortOrderAscending
+	sortOrderDescending
+)
+
 type config struct {
 	File       *os.File
 	ByteFormat int
+	SortOrder  int
 }
 
 func newConfig() config {
-	return config{nil, formatDecimal}
+	return config{nil, formatDecimal, sortOrderNone}
 }
 
 func byteFormat(formatStr string) (int, error) {
@@ -42,6 +49,19 @@ func byteFormat(formatStr string) (int, error) {
 		return formatHexadecimal, nil
 	default:
 		return 0, errors.New("invalid byte format")
+	}
+}
+
+func sortOrder(orderStr string) (int, error) {
+	switch orderStr {
+	case "":
+		return sortOrderNone, nil
+	case "asc":
+		return sortOrderAscending, nil
+	case "desc":
+		return sortOrderDescending, nil
+	default:
+		return 0, errors.New("invalid sort order")
 	}
 }
 
@@ -118,13 +138,14 @@ func doByteHistogram(cfg config) error {
 
 func main() {
 	flag.Usage = func() {
-		fmt.Println("usage: byte-hist [-help] [-format={d|x|b}] [FILE]")
+		fmt.Println("usage: byte-hist [-help] [-version] [-format={d|x|b}] [-sort={asc|desc}] [FILE]")
 		flag.PrintDefaults()
 	}
 
 	helpPtr := flag.Bool("help", false, "print this message")
 	versionPtr := flag.Bool("version", false, "print the version")
 	formatPtr := flag.String("format", "d", "byte format {\"d\"ecimal | he\"x\"adecimal | \"b\"inary}")
+	sortPtr := flag.String("sort", "", "sort by count {\"asc\" | \"desc\"}")
 
 	flag.Parse()
 
@@ -139,6 +160,12 @@ func main() {
 	}
 
 	bytefmt, err := byteFormat(*formatPtr)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	sortorder, err := sortOrder(*sortPtr)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -160,6 +187,7 @@ func main() {
 	cfg := newConfig()
 	cfg.File = file
 	cfg.ByteFormat = bytefmt
+	cfg.SortOrder = sortorder
 
 	if err := doByteHistogram(cfg); err != nil {
 		fmt.Println(err)

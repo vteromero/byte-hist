@@ -124,7 +124,19 @@ func printByteHistogram(cfg config, bhist *bytehist.ByteHistogram) {
 		colValueFmt[colIdxByte] = "%02x"
 	}
 
-	bytelist, bytecount := bhist.ByteList()
+	var (
+		bytelist  []byte
+		bytecount []uint64
+	)
+
+	switch cfg.SortOrder {
+	case sortOrderNone:
+		bytelist, bytecount = bhist.ByteList()
+	case sortOrderAscending:
+		bytelist, bytecount = bhist.SortedByteList(true)
+	case sortOrderDescending:
+		bytelist, bytecount = bhist.SortedByteList(false)
+	}
 
 	printSummary(cfg.File.Name(), bhist.DataSize, len(bytelist))
 
