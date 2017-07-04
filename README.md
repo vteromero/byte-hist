@@ -1,4 +1,4 @@
-# byte-hist
+# byte-hist [![Go Report Card](https://goreportcard.com/badge/github.com/vteromero/byte-hist)](https://goreportcard.com/report/github.com/vteromero/byte-hist)
 
 ![Execution example](images/example.png "Execution example")
 
