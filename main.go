@@ -118,7 +118,7 @@ func readBytes(file *os.File, bhist *bytehist.ByteHistogram) {
 			break
 		}
 
-		bhist.Update(buf, n)
+		bhist.Update(buf[0:n])
 	}
 }
 

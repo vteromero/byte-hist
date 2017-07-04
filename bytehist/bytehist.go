@@ -26,15 +26,15 @@ func (bh *ByteHistogram) Init() {
 }
 
 // Update updates a ByteHistogram with an array of bytes.
-func (bh *ByteHistogram) Update(b []byte, l int) {
-	for i := 0; i < l; i++ {
-		bh.Count[b[i]]++
+func (bh *ByteHistogram) Update(bytes []byte) {
+	for _, b := range bytes {
+		bh.Count[b]++
 	}
-	bh.DataSize += uint64(l)
+	bh.DataSize += uint64(len(bytes))
 }
 
-// ByteList returns two values: an array of the bytes that have been counted
-// once at least and an array with the actual number of times that every byte
+// ByteList returns two values: a slice of the bytes that have been counted
+// once at least and a slice with the actual number of times that every byte
 // appears on the processed data.
 func (bh *ByteHistogram) ByteList() ([]byte, []uint64) {
 	bytelist := make([]byte, 256)
@@ -59,15 +59,19 @@ type byteCountPair struct {
 
 type byCountAsc []byteCountPair
 
-func (a byCountAsc) Len() int           { return len(a) }
-func (a byCountAsc) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a byCountAsc) Less(i, j int) bool { return a[i].c < a[j].c }
+func (a byCountAsc) Len() int      { return len(a) }
+func (a byCountAsc) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a byCountAsc) Less(i, j int) bool {
+	return (a[i].c < a[j].c) || (a[i].c == a[j].c && a[i].b < a[j].b)
+}
 
 type byCountDesc []byteCountPair
 
-func (a byCountDesc) Len() int           { return len(a) }
-func (a byCountDesc) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a byCountDesc) Less(i, j int) bool { return a[i].c > a[j].c }
+func (a byCountDesc) Len() int      { return len(a) }
+func (a byCountDesc) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a byCountDesc) Less(i, j int) bool {
+	return (a[i].c > a[j].c) || (a[i].c == a[j].c && a[i].b < a[j].b)
+}
 
 // SortedByteList returns two values as the ByteList function does, but the
 // resulting slices are sorted by the number of bytes.
