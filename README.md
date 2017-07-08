@@ -23,7 +23,7 @@ Once the `get` completes, you should find the `byte-hist` executable inside
 These are some examples of how you can run `byte-hist`:
 
 ```
-$ ./byte-hist file                      # byte histogram of file
+$ ./byte-hist file                      # print the byte histogram of file
 $ ./byte-hist -format=x file            # the bytes are printed in hexadecimal format
 $ echo "hello world!" | ./byte-hist     # you can use a pipe
 ```
