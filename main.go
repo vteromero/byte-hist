@@ -9,6 +9,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"log"
 	"os"
 
 	"github.com/vteromero/byte-hist/bytehist"
@@ -136,11 +137,19 @@ func doByteHistogram(cfg config) error {
 	return nil
 }
 
+func usage() {
+	fmt.Println(`
+usage: byte-hist [-help] [-version] [-format={d|x|b}] [-sort={asc|desc}] [FILE]
+
+options:`)
+	flag.PrintDefaults()
+	fmt.Println()
+}
+
 func main() {
-	flag.Usage = func() {
-		fmt.Println("usage: byte-hist [-help] [-version] [-format={d|x|b}] [-sort={asc|desc}] [FILE]")
-		flag.PrintDefaults()
-	}
+	log.SetPrefix("byte-hist: ")
+
+	flag.Usage = usage
 
 	helpPtr := flag.Bool("help", false, "print this message")
 	versionPtr := flag.Bool("version", false, "print the version")
@@ -161,25 +170,21 @@ func main() {
 
 	bytefmt, err := byteFormat(*formatPtr)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 
 	sortorder, err := sortOrder(*sortPtr)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 
 	if flag.NArg() > 1 {
-		fmt.Println("too many arguments")
-		os.Exit(1)
+		log.Fatal("too many arguments")
 	}
 
 	file, err := openFile(flag.Arg(0))
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 
 	defer closeFile(file)
@@ -190,7 +195,6 @@ func main() {
 	cfg.SortOrder = sortorder
 
 	if err := doByteHistogram(cfg); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 }
