@@ -22,6 +22,7 @@ const (
 	formatBinary = iota
 	formatDecimal
 	formatHexadecimal
+	formatCharacter
 )
 
 const (
@@ -48,6 +49,8 @@ func byteFormat(formatStr string) (int, error) {
 		return formatDecimal, nil
 	case "x":
 		return formatHexadecimal, nil
+	case "c":
+		return formatCharacter, nil
 	default:
 		return 0, errors.New("invalid byte format")
 	}
@@ -139,7 +142,7 @@ func doByteHistogram(cfg config) error {
 
 func usage() {
 	fmt.Println(`
-usage: byte-hist [-help] [-version] [-format={d|x|b}] [-sort={asc|desc}] [FILE]
+usage: byte-hist [-help] [-version] [-format={d|x|b|c}] [-sort={asc|desc}] [FILE]
 
 options:`)
 	flag.PrintDefaults()
@@ -153,7 +156,7 @@ func main() {
 
 	helpPtr := flag.Bool("help", false, "print this message")
 	versionPtr := flag.Bool("version", false, "print the version")
-	formatPtr := flag.String("format", "d", "byte format {\"d\"ecimal | he\"x\"adecimal | \"b\"inary}")
+	formatPtr := flag.String("format", "d", "byte format {\"d\"ecimal | he\"x\"adecimal | \"b\"inary | \"c\"haracter}")
 	sortPtr := flag.String("sort", "", "sort by count {\"asc\" | \"desc\"}")
 
 	flag.Parse()

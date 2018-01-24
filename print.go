@@ -122,6 +122,9 @@ func printByteHistogram(cfg config, bhist *bytehist.ByteHistogram) {
 	case formatHexadecimal:
 		colWidth[colIdxByte] = 6
 		colValueFmt[colIdxByte] = "%02x"
+	case formatCharacter:
+		colWidth[colIdxByte] = 10
+		colValueFmt[colIdxByte] = "%q"
 	}
 
 	var (
