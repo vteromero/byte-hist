@@ -16,7 +16,7 @@ import (
 )
 
 // VERSION holds the application version
-const VERSION = "0.2"
+const VERSION = "0.3"
 
 const (
 	formatBinary = iota
@@ -32,13 +32,14 @@ const (
 )
 
 type config struct {
-	File       *os.File
-	ByteFormat int
-	SortOrder  int
+	File          *os.File
+	ByteFormat    int
+	SortOrder     int
+	HumanReadable bool
 }
 
 func newConfig() config {
-	return config{nil, formatDecimal, sortOrderNone}
+	return config{nil, formatDecimal, sortOrderNone, false}
 }
 
 func byteFormat(formatStr string) (int, error) {
@@ -142,7 +143,7 @@ func doByteHistogram(cfg config) error {
 
 func usage() {
 	fmt.Println(`
-usage: byte-hist [-help] [-version] [-format={d|x|b|c}] [-sort={asc|desc}] [FILE]
+usage: byte-hist [-help] [-version] [-format={d|x|b|c}] [-sort={asc|desc}] [-human-readable] [FILE]
 
 options:`)
 	flag.PrintDefaults()
@@ -158,6 +159,7 @@ func main() {
 	versionPtr := flag.Bool("version", false, "print the version")
 	formatPtr := flag.String("format", "d", "byte format {\"d\"ecimal | he\"x\"adecimal | \"b\"inary | \"c\"haracter}")
 	sortPtr := flag.String("sort", "", "sort by count {\"asc\" | \"desc\"}")
+	humanPtr := flag.Bool("human-readable", false, "print human readable file size (e.g. 1.26 KB, 3.21 MB, 2.93 GB)")
 
 	flag.Parse()
 
@@ -196,6 +198,7 @@ func main() {
 	cfg.File = file
 	cfg.ByteFormat = bytefmt
 	cfg.SortOrder = sortorder
+	cfg.HumanReadable = *humanPtr
 
 	if err := doByteHistogram(cfg); err != nil {
 		log.Fatal(err)

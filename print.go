@@ -41,10 +41,34 @@ func wrappingFormat(width int, rightAlignment bool) string {
 	return fmt.Sprintf("%%%s%ds", sign, width)
 }
 
-func printSummary(filename string, datasize uint64, bytelistlen int) {
+func humanReadableValueFmt(value float64, unit string) string {
+	if uint64(value*100.0) == (uint64(value) * 100) {
+		return fmt.Sprintf("%d %s", uint64(value), unit)
+	}
+	return fmt.Sprintf("%.2f %s", value, unit)
+}
+
+func humanReadableValue(value uint64) string {
+	units := []string{"bytes", "KB", "MB", "GB", "TB", "PB"}
+	var u string
+	v := float64(value)
+	for _, u = range units {
+		if v < 1024.0 {
+			return humanReadableValueFmt(v, u)
+		}
+		v /= 1024.0
+	}
+	return humanReadableValueFmt(v, units[len(units)-1])
+}
+
+func printSummary(filename string, datasize uint64, humanfmt bool, bytelistlen int) {
 	fmt.Println()
 	fmt.Printf("%-20s%s\n", "File name:", filename)
-	fmt.Printf("%-20s%d\n", "File size:", datasize)
+	if humanfmt {
+		fmt.Printf("%-20s%s\n", "File size:", humanReadableValue(datasize))
+	} else {
+		fmt.Printf("%-20s%d\n", "File size:", datasize)
+	}
 	fmt.Printf("%-20s%d\n", "Different bytes:", bytelistlen)
 	fmt.Println()
 }
@@ -141,7 +165,7 @@ func printByteHistogram(cfg config, bhist *bytehist.ByteHistogram) {
 		bytelist, bytecount = bhist.SortedByteList(false)
 	}
 
-	printSummary(cfg.File.Name(), bhist.DataSize, len(bytelist))
+	printSummary(cfg.File.Name(), bhist.DataSize, cfg.HumanReadable, len(bytelist))
 
 	printTableHeader()
 
