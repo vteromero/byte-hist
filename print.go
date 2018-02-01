@@ -41,31 +41,31 @@ func wrappingFormat(width int, rightAlignment bool) string {
 	return fmt.Sprintf("%%%s%ds", sign, width)
 }
 
-func humanReadableValueFmt(value float64, unit string) string {
-	if uint64(value*100.0) == (uint64(value) * 100) {
-		return fmt.Sprintf("%d %s", uint64(value), unit)
+func humanReadableFileSizeFmt(size float64, unit string) string {
+	if uint64(size*100.0) == (uint64(size) * 100) {
+		return fmt.Sprintf("%d %s", uint64(size), unit)
 	}
-	return fmt.Sprintf("%.2f %s", value, unit)
+	return fmt.Sprintf("%.2f %s", size, unit)
 }
 
-func humanReadableValue(value uint64) string {
+func humanReadableFileSize(size uint64) string {
 	units := []string{"bytes", "KB", "MB", "GB", "TB", "PB"}
 	var u string
-	v := float64(value)
+	sz := float64(size)
 	for _, u = range units {
-		if v < 1024.0 {
-			return humanReadableValueFmt(v, u)
+		if sz < 1024.0 {
+			return humanReadableFileSizeFmt(sz, u)
 		}
-		v /= 1024.0
+		sz /= 1024.0
 	}
-	return humanReadableValueFmt(v, units[len(units)-1])
+	return humanReadableFileSizeFmt(sz, units[len(units)-1])
 }
 
 func printSummary(filename string, datasize uint64, humanfmt bool, bytelistlen int) {
 	fmt.Println()
 	fmt.Printf("%-20s%s\n", "File name:", filename)
 	if humanfmt {
-		fmt.Printf("%-20s%s\n", "File size:", humanReadableValue(datasize))
+		fmt.Printf("%-20s%s\n", "File size:", humanReadableFileSize(datasize))
 	} else {
 		fmt.Printf("%-20s%d\n", "File size:", datasize)
 	}
