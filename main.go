@@ -16,7 +16,7 @@ import (
 )
 
 // VERSION holds the application version
-const VERSION = "0.3"
+const VERSION = "0.4"
 
 const (
 	formatBinary = iota
